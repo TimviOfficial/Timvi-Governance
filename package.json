@@ -1,0 +1,36 @@
+{
+  "name": "timvi-governance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "\"\"",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "chai": "^4.2.0",
+    "eth-gas-reporter": "^0.2.17",
+    "openzeppelin-test-helpers": "^0.5.1",
+    "solidity-coverage": "^0.7.9",
+    "truffle": "^5.1.39"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "truffle test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TimviOfficial/Timvi-Governance.git"
+  },
+  "keywords": [
+    "DAO",
+    "Timvi",
+    "Stablecoin",
+    "DeFi"
+  ],
+  "author": "TimviOfficial",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TimviOfficial/Timvi-Governance/issues"
+  },
+  "homepage": "https://github.com/TimviOfficial/Timvi-Governance#readme"
+}
