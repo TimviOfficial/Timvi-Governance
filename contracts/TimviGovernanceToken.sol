@@ -3,7 +3,7 @@
 import "./helpers/IERC20.sol";
 import "./helpers/SafeMath.sol";
 
-pragma solidity ^0.6.0;
+pragma solidity 0.6.12;
 
 
 /**

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.0;
+pragma solidity 0.6.12;
 
 import "./helpers/Math.sol";
 import "./helpers/SafeMath.sol";
@@ -70,7 +70,7 @@ contract Distribution is LPTokenWrapper, IRewardDistributionRecipient {
     }
 
     function lastTimeRewardApplicable() public view returns (uint256) {
-        return Math.min(now, periodFinish);
+        return Math.min(block.timestamp, periodFinish);
     }
 
     function rewardPerToken() public view returns (uint256) {
@@ -127,15 +127,19 @@ contract Distribution is LPTokenWrapper, IRewardDistributionRecipient {
         onlyRewardDistribution
         updateReward(address(0))
     {
-        if (now >= periodFinish) {
+        if (block.timestamp >= periodFinish) {
             rewardRate = reward.div(DURATION);
         } else {
-            uint256 remaining = periodFinish.sub(now);
+            uint256 remaining = periodFinish.sub(block.timestamp);
             uint256 leftover = remaining.mul(rewardRate);
             rewardRate = reward.add(leftover).div(DURATION);
         }
-        lastUpdateTime = now;
-        periodFinish = now.add(DURATION);
+
+        uint balance = rewardToken.balanceOf(address(this));
+        require(rewardRate <= balance.div(DURATION), "Provided reward too high");
+
+        lastUpdateTime = block.timestamp;
+        periodFinish = block.timestamp.add(DURATION);
         emit RewardAdded(reward);
     }
 
@@ -143,6 +147,7 @@ contract Distribution is LPTokenWrapper, IRewardDistributionRecipient {
         external
         onlyRewardDistribution
     {
+        require(users.length == rewardAmounts.length, "Users and rewardAmounts are different lengths");
         require(token != rewardToken && token != poolToken, "Cannot distribute this token");
         for (uint i=0; i < users.length; i++) {
             token.safeTransfer(users[i], rewardAmounts[i]);
