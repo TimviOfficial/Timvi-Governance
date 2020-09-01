@@ -246,6 +246,22 @@ contract('TimviDAODistribution', function ([_, wallet1, wallet2, wallet3, wallet
             expect(await this.rewardToken.balanceOf(wallet2)).to.be.bignumber.almostEqualDiv1e18(web3.utils.toWei('36000'));
         });
 
+        it('Notify reward after 6 d', async function () {
+            // 72000 reward tokens per week
+            await this.distribution.notifyRewardAmount(web3.utils.toWei('72000'), {from: wallet1});
+
+            await this.distribution.stake(web3.utils.toWei('1'), { from: wallet1 });
+            await this.distribution.stake(web3.utils.toWei('1'), { from: wallet2 });
+
+            await timeJumpTo(this.started.add(time.duration.days(6)));
+
+            await this.distribution.notifyRewardAmount(web3.utils.toWei('72000'), {from: wallet1});
+
+            const expectedRewardRate = new BN(web3.utils.toWei('72000')).mul(new BN('8')).div(new BN('7')).div(new BN(web3.utils.toWei('2')));
+
+            expect(await this.distribution.rewardRate()).to.be.bignumber.almostEqualDiv1e18(expectedRewardRate);
+        });
+
         it('Distribute additional rewards', async function () {
             const arToken = await AdditionalRewardToken.new();
             await arToken.mint(this.distribution.address, web3.utils.toWei('1000'));
